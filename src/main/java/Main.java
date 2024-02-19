@@ -1,8 +1,6 @@
 import java.io.*;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -14,35 +12,27 @@ public class Main {
                 new FileReader(file)
         );
 
+        TreeMap<String, Integer> map_words = new TreeMap<>();
+
         String []words = bufferedReader.readLine().split(" ");
-        bufferedReader.close();
-        Arrays.sort(words);
 
-        // * Подсчет и вывод уникальных значений с поиском слова с максимальным повтором
-        ArrayList<String> printed = new ArrayList<>();
-
-        int indexOfMax = 0;
-        int maxCounter = 1;
-        int counter = 1;
-        for (int i=0; i<words.length; i++) {
-            String word = words[i];
-            for (int j=0; j<words.length; j++) {
-                if (i != j && word.equals(words[j])) {
-                    counter += 1;
-                }
-                if (maxCounter < counter) {
-                    indexOfMax = i;
-                    maxCounter = counter;
-                }
+        for (String word : words) {
+            int map_word_counter = map_words.getOrDefault(word, 0);
+            if (map_word_counter != 0) {
+                map_words.replace(word, map_word_counter + 1);
+            } else {
+                map_words.put(word, 1);
             }
-            if (!printed.contains(word)) {
-                System.out.printf("%s-%d\n",word, counter);
-                printed.add(word);
+        }
+        Map.Entry<String, Integer> max_word = map_words.firstEntry();
+        for (Map.Entry<String, Integer> entry : map_words.entrySet()) {
+            if (max_word.getValue() <= entry.getValue()) {
+                max_word = entry;
             }
-            counter = 1;
+            System.out.printf("%s %d \n", entry.getKey(), entry.getValue());
         }
 
-        System.out.printf("**Winner**\nСлово-%s Встречается-%d", words[indexOfMax], maxCounter);
+        System.out.printf("**Winner**\nСлово-%s Встречается-%d", max_word.getKey(), max_word.getValue());
 
     }
 }
